@@ -24,6 +24,7 @@ namespace Linq
         {
             OleDbConnection myCon = new OleDbConnection(@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\alex\source\repos\Linq\Linq\bin\Debug\Data\School.mdb");
             myCon.Open();
+
             OleDbCommand mycmd = new OleDbCommand("SELECT * FROM Courses",myCon);
             OleDbDataAdapter adpCourses = new OleDbDataAdapter(mycmd);
             adpCourses.Fill(myset, "Courses");
@@ -33,9 +34,9 @@ namespace Linq
             adpStudents.Fill(myset, "Students");
 
 
-           // GridResult.DataSource = myset.Tables["Students"];
+            GridResult.DataSource = myset.Tables["Students"];
 
-             GridResult.DataSource = myset.Tables["Courses"];
+             //GridResult.DataSource = myset.Tables["Courses"];
 
             //Fill the combobox with LINQ
 
@@ -60,7 +61,14 @@ namespace Linq
 
         private void cboCourse_SelectedIndexChanged(object sender, EventArgs e)
         {
-           // int refC
+           int refC = Convert.ToInt32(cboCourse.SelectedValue.ToString());
+
+            var student = from DataRow st in myset.Tables["Students"].Rows
+                          where st.Field<Int32>("RefCourse") == refC
+                          select st;
+
+            GridResult.DataSource = student.CopyToDataTable();
+
         }
     }
 }
